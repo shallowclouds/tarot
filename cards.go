@@ -112,7 +112,7 @@ func initCards() {
 	}
 
 	for idx, card := range cards {
-		card.Pic = mustReadImg(fmt.Sprintf("assets/%d.jpg", idx))
+		card.Pic = imaging.Resize(mustReadImg(fmt.Sprintf("assets/%d.jpg", idx)), 215, 0, imaging.Lanczos)
 		assets.Cards = append(assets.Cards, card)
 	}
 }
