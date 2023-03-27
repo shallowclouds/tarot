@@ -118,7 +118,7 @@ func initCards() {
 }
 
 func processReaderImg(pic image.Image) image.Image {
-	imaging.Resize(pic, defaultImageWidth, 0, imaging.Lanczos)
+	pic = imaging.Resize(pic, 0, defaultImageHeight, imaging.Lanczos)
 	rgb64 := imageTypeToRGBA64(pic)
 	bounds := rgb64.Bounds()
 	dx := bounds.Dx()
@@ -154,7 +154,7 @@ func initBgImg() {
 	img := image.NewNRGBA(image.Rect(0, 0, 1200, 720))
 	draw.Draw(img, img.Bounds(), image.Black, image.Point{}, draw.Src)
 
-	readerImg := mustReadImg("assets/reader1.jpg")
+	readerImg := mustReadImg("assets/reader.jpg")
 	readerImg = processReaderImg(readerImg)
 	draw.Draw(img, readerImg.Bounds().Add(image.Pt((defaultImageWidth-readerImg.Bounds().Dx())/2, 0)), readerImg, image.Point{}, draw.Over)
 
