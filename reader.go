@@ -7,6 +7,7 @@ import (
 	"image/color"
 	"image/draw"
 	"math/rand"
+	"strings"
 	"time"
 
 	"github.com/disintegration/imaging"
@@ -54,8 +55,17 @@ const (
 请模仿一位寡言少语高深莫测的塔罗牌占卜师，简单解读一下这个牌面，请从我要占卜的事情角度解读，话语精简，不用提示占卜的局限性。`
 )
 
+func (r *Reader) sanitizeThing(thing string) string {
+	// Replace puncuation to space.
+	for _, remove := range []string{"“", "”", "\""} {
+		thing = strings.ReplaceAll(thing, remove, " ")
+	}
+
+	return thing
+}
+
 func (r *Reader) Prompt(cards [3]Card, thing string) string {
-	p := fmt.Sprintf(defaultPrompt, thing,
+	p := fmt.Sprintf(defaultPrompt, r.sanitizeThing(thing),
 		cards[0].ZhString(), cards[1].ZhString(), cards[2].ZhString())
 
 	return p
