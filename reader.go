@@ -122,7 +122,7 @@ func (r *Reader) Divine(ctx context.Context, thing string, callback func(err err
 }
 
 const (
-	fontSize = 22.0
+	fontSize = 26.0
 )
 
 func (r *Reader) getTextSize(s string) (int, int) {
@@ -147,6 +147,7 @@ func (r *Reader) Render(cards [3]Card) (image.Image, error) {
 	c.SetFontSize(fontSize)
 
 	span := 100
+	startH := 120
 	w := (defaultImageWidth - span*4) / 3
 	var card Card
 	for idx := 0; idx < 3; idx++ {
@@ -156,14 +157,14 @@ func (r *Reader) Render(cards [3]Card) (image.Image, error) {
 			pic = imaging.Rotate(pic, 180, color.NRGBA{0, 0, 0, 0})
 		}
 		cen := span + (span+w)*idx + w/2
-		picP := image.Pt(cen-pic.Bounds().Dx()/2, 120)
+		picP := image.Pt(cen-pic.Bounds().Dx()/2, startH)
 
 		pt := pic.Bounds().Add(picP)
 		draw.Draw(img, pt, pic, image.Point{}, draw.Src)
 
 		s := card.ZhString()
 		fW, fH := r.getTextSize(s)
-		wordP := freetype.Pt(cen-fW/2, 120+pic.Bounds().Dy()+fH+10)
+		wordP := freetype.Pt(cen-fW/2, startH-fH)
 		_, _ = c.DrawString(s, wordP)
 	}
 
