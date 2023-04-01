@@ -2,7 +2,6 @@ package tarot
 
 import (
 	"context"
-	"fmt"
 	"image"
 	"image/color"
 	"image/draw"
@@ -48,11 +47,9 @@ func (r *Reader) Choose() ([3]Card, error) {
 }
 
 const (
-	defaultPrompt = `我想要用塔罗牌占卜 “%s”，随后我抽中了三张牌，他们分别是：
-	1. %s，
-	2. %s，
-	3. %s。
-请模仿一位寡言少语高深莫测的塔罗牌占卜师，简单解读一下这个牌面，请从我要占卜的事情角度解读，话语精简，不用提示占卜的局限性。`
+	defaultPrompt = `
+假如你是一位神秘的塔罗牌占卜师，我想要占卜事情是 “{{thing}}”，我抽到的三张牌分别是：{{card1}}，{{card2}}，{{card3}}。
+请根据三张牌面和这件具体事情进行解读，语言简练精辟客观，不准使用“虽然...但是...”这样模棱两可的话，千万不要建议我或者安慰我，不要提醒我占卜的局限性或者意义。`
 )
 
 func (r *Reader) sanitizeThing(thing string) string {
@@ -65,8 +62,16 @@ func (r *Reader) sanitizeThing(thing string) string {
 }
 
 func (r *Reader) Prompt(cards [3]Card, thing string) string {
-	p := fmt.Sprintf(defaultPrompt, r.sanitizeThing(thing),
-		cards[0].ZhString(), cards[1].ZhString(), cards[2].ZhString())
+	p := defaultPrompt
+	fills := map[string]string{
+		"thing": r.sanitizeThing(thing),
+		"card1": cards[0].ZhString(),
+		"card2": cards[1].ZhString(),
+		"card3": cards[2].ZhString(),
+	}
+	for k, v := range fills {
+		p = strings.ReplaceAll(p, "{{"+k+"}}", v)
+	}
 
 	return p
 }
@@ -162,6 +167,5 @@ func (r *Reader) Render(cards [3]Card) (image.Image, error) {
 		_, _ = c.DrawString(s, wordP)
 	}
 
-	// utils.SavePng(img, "test.png")
 	return img, nil
 }
