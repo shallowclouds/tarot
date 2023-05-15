@@ -6,7 +6,10 @@ import (
 	"github.com/sashabaranov/go-openai"
 )
 
-var _ GPTReader = &ChatGPTReader{}
+var (
+	_ GPTReader = &ChatGPTReader{}
+	_ GPTReader = &DumbGPTReader{}
+)
 
 type ChatGPTReader struct {
 	chatGPTCli *openai.Client
@@ -39,4 +42,11 @@ func (r *ChatGPTReader) Chat(ctx context.Context, systemMsg, userMsg string) (st
 	}
 
 	return resp.Choices[0].Message.Content, nil
+}
+
+// DumbGPTReader never reads.
+type DumbGPTReader struct{}
+
+func (r *DumbGPTReader) Chat(ctx context.Context, systemMsg, userMsg string) (string, error) {
+	return "无法从卡牌中解读占卜结果。", nil
 }
