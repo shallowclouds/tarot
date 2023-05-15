@@ -13,20 +13,23 @@ import (
 	"github.com/golang/freetype"
 	"github.com/golang/freetype/truetype"
 	"github.com/pkg/errors"
-	"github.com/sashabaranov/go-openai"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/image/font"
 )
 
 type Reader struct {
-	gptCli *openai.Client
-	assets Assets
+	gptReader GPTReader
+	assets    Assets
 }
 
-func NewReader(gptCli *openai.Client, assets Assets) (*Reader, error) {
+type GPTReader interface {
+	Chat(ctx context.Context, systemMsg, userMsg string) (string, error)
+}
+
+func NewReader(gptReader GPTReader, assets Assets) (*Reader, error) {
 	reader := &Reader{
-		gptCli: gptCli,
-		assets: assets,
+		gptReader: gptReader,
+		assets:    assets,
 	}
 
 	return reader, nil
@@ -78,23 +81,12 @@ func (r *Reader) Prompt(cards [3]Card, thing string) string {
 
 func (r *Reader) Read(ctx context.Context, cards [3]Card, thing string) (string, error) {
 	prompt := r.Prompt(cards, thing)
-	resp, err := r.gptCli.CreateChatCompletion(
-		ctx,
-		openai.ChatCompletionRequest{
-			Model: openai.GPT3Dot5Turbo0301,
-			Messages: []openai.ChatCompletionMessage{
-				{
-					Role:    openai.ChatMessageRoleUser,
-					Content: prompt,
-				},
-			},
-		},
-	)
+	resp, err := r.gptReader.Chat(ctx, "", prompt)
 	if err != nil {
 		return "", errors.WithMessage(err, "failed to read from gpt")
 	}
 
-	return resp.Choices[0].Message.Content, nil
+	return resp, nil
 }
 
 func (r *Reader) Divine(ctx context.Context, thing string, callback func(err error, res string)) ([3]Card, image.Image, error) {
@@ -110,7 +102,9 @@ func (r *Reader) Divine(ctx context.Context, thing string, callback func(err err
 		if err != nil {
 			logger.WithError(err).Warn("failed to call chat gpt")
 		}
-		callback(err, res)
+		if callback != nil {
+			callback(err, res)
+		}
 	}()
 
 	img, err := r.Render(cards)
