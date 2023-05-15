@@ -25,12 +25,6 @@ func SavePng(img image.Image, p string) error {
 	return os.WriteFile(p, data.Bytes(), os.ModePerm)
 }
 
-type dumbGPTReader struct{}
-
-func (r *dumbGPTReader) Chat(ctx context.Context, systemMsg, userMsg string) (string, error) {
-	return "运气不错", nil
-}
-
 func main() {
 	var (
 		thingArg = flag.String("thing", "我这周运势怎么样？", "Thing you want to divine")
@@ -39,22 +33,17 @@ func main() {
 
 	rand.Seed(time.Now().UnixNano())
 
-	reader, err := tarot.NewReader(&dumbGPTReader{}, tarot.GetDefaultAssets())
+	reader, err := tarot.NewReader(&tarot.DumbGPTReader{}, tarot.GetDefaultAssets())
 	if err != nil {
 		panic(err)
 	}
 
-	cards, img, err := reader.Divine(context.Background(), *thingArg, func (err error, res string)  {
-		if err != nil {
-			fmt.Printf("failed to read from tarot cards: %v\n", err)
-			return
-		}
-
-		fmt.Printf("%s\n", res)
-	})
+	cards, img, res, err := reader.DivineSync(context.Background(), *thingArg)
 	if err != nil {
 		panic(err)
 	}
+
+	fmt.Printf("%s\n", res)
 
 	fmt.Println(reader.Prompt(cards, *thingArg))
 

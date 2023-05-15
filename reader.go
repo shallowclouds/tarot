@@ -89,6 +89,28 @@ func (r *Reader) Read(ctx context.Context, cards [3]Card, thing string) (string,
 	return resp, nil
 }
 
+func (r *Reader) DivineSync(ctx context.Context, thing string) ([3]Card, image.Image, string, error) {
+	cards, _ := r.Choose()
+	logger := logrus.StandardLogger()
+	logger.Infof("chosen cards: %s, %s, %s", cards[0].ZhString(), cards[1].ZhString(), cards[2].ZhString())
+
+	logger.Infof("start to call chat gpt reader")
+	start := time.Now()
+	res, err := r.Read(ctx, cards, thing)
+	logger.Infof("call gpt reader cost %.2f s", time.Since(start).Seconds())
+	if err != nil {
+		logger.WithError(err).Warn("failed to call chat gpt")
+		return cards, nil, "", errors.WithMessage(err, "failed to read cards")
+	}
+
+	img, err := r.Render(cards)
+	if err != nil {
+		return cards, nil, "", errors.WithMessage(err, "failed to render img")
+	}
+
+	return cards, img, res, nil
+}
+
 func (r *Reader) Divine(ctx context.Context, thing string, callback func(err error, res string)) ([3]Card, image.Image, error) {
 	cards, _ := r.Choose()
 	logger := logrus.StandardLogger()
