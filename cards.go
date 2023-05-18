@@ -147,11 +147,34 @@ func processReaderImg(pic image.Image) image.Image {
 		}
 	}
 
+	yThreshold := int(float32(dy) * 0.9)
+	for x := 0; x < dx; x++ {
+		for y := yThreshold; y < dy; y++ {
+			colorRgb := img.At(x, y)
+			r, g, b, a := colorRgb.RGBA()
+			percent := 1.0 - math.Abs(float64(y)-float64(yThreshold))/(float64(dy)-float64(yThreshold))
+
+			rr, gg, bb, aa := img.ColorModel().Convert(color.NRGBA64{
+				R: uint16(r),
+				G: uint16(g),
+				B: uint16(b),
+				A: uint16(float64(a) * percent),
+			}).RGBA()
+
+			img.SetRGBA64(x, y, color.RGBA64{
+				R: uint16(rr),
+				G: uint16(gg),
+				B: uint16(bb),
+				A: uint16(aa),
+			})
+		}
+	}
+
 	return img
 }
 
 func initBgImg() {
-	img := image.NewNRGBA(image.Rect(0, 0, 1200, 720))
+	img := image.NewNRGBA(image.Rect(0, 0, 1200, 720+300))
 	draw.Draw(img, img.Bounds(), image.Black, image.Point{}, draw.Src)
 
 	readerImg := mustReadImg("assets/reader.jpg")

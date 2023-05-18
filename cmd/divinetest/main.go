@@ -43,9 +43,11 @@ func main() {
 		panic(err)
 	}
 
+	fmt.Println(cards)
+
 	fmt.Printf("%s\n", res)
 
-	fmt.Println(reader.Prompt(cards, *thingArg))
+	// fmt.Println(reader.Prompt(cards, *thingArg))
 
 	err = SavePng(img, "divine_results.png")
 	if err != nil {

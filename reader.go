@@ -152,7 +152,7 @@ func (r *Reader) getTextSize(s string) (int, int) {
 }
 
 func (r *Reader) Render(cards [3]Card) (image.Image, error) {
-	img := image.NewNRGBA64(image.Rect(0, 0, defaultImageWidth, defaultImageHeight))
+	img := image.NewNRGBA64(image.Rect(0, 0, defaultImageWidth, defaultImageHeight+200))
 	draw.Draw(img, r.assets.BackgroundImg.Bounds(), r.assets.BackgroundImg, image.Point{}, draw.Src)
 
 	c := freetype.NewContext()

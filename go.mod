@@ -11,6 +11,7 @@ require (
 )
 
 require (
+	github.com/fogleman/gg v1.3.0 // indirect
 	github.com/sashabaranov/go-openai v1.9.4 // indirect
 	golang.org/x/sys v0.5.0 // indirect
 )
