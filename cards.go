@@ -112,7 +112,8 @@ func initCards() {
 	}
 
 	for idx, card := range cards {
-		card.Pic = imaging.Resize(mustReadImg(fmt.Sprintf("assets/%d.jpg", idx)), 217, 385, imaging.Lanczos)
+		// card.Pic = imaging.Resize(mustReadImg(fmt.Sprintf("assets/%d.jpg", idx)), 217, 385, imaging.Lanczos)
+		card.Pic = imaging.Resize(mustReadImg(fmt.Sprintf("assets/%d.jpg", idx)), 120, 212, imaging.Lanczos)
 		assets.Cards = append(assets.Cards, card)
 	}
 }
@@ -162,7 +163,7 @@ func initBgImg() {
 }
 
 func initFonts() {
-	data, err := fs.ReadFile(assetsFS, "assets/arplmingu20lt.ttf")
+	data, err := fs.ReadFile(assetsFS, "assets/LXGWWenKaiMono-Light.ttf")
 	if err != nil {
 		panic(err)
 	}

@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"image"
+	"image/jpeg"
 	"image/png"
 	"math/rand"
 	"os"
@@ -25,6 +26,16 @@ func SavePng(img image.Image, p string) error {
 	return os.WriteFile(p, data.Bytes(), os.ModePerm)
 }
 
+func SaveJpg(img image.Image, p string) error {
+	_ = os.Remove(p)
+	data := bytes.Buffer{}
+	if err := jpeg.Encode(&data, img, &jpeg.Options{Quality: 100}); err != nil {
+		return errors.WithMessage(err, "failed to encode jpg")
+	}
+
+	return os.WriteFile(p, data.Bytes(), os.ModePerm)
+}
+
 func main() {
 	var (
 		thingArg = flag.String("thing", "我这周运势怎么样？", "Thing you want to divine")
@@ -33,7 +44,7 @@ func main() {
 
 	rand.Seed(time.Now().UnixNano())
 
-	reader, err := tarot.NewReader(&tarot.DumbGPTReader{}, tarot.GetDefaultAssets())
+	reader, err := tarot.NewReader(&tarot.DumbGPTReader{}, "", tarot.GetDefaultAssets())
 	if err != nil {
 		panic(err)
 	}
@@ -47,7 +58,8 @@ func main() {
 
 	fmt.Println(reader.Prompt(cards, *thingArg))
 
-	err = SavePng(img, "divine_results.png")
+	// err = SavePng(img, "divine_results.png")
+	err = SaveJpg(img, "dev/divine_results.jpg")
 	if err != nil {
 		panic(err)
 	}
