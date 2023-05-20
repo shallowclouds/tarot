@@ -18,24 +18,28 @@ import (
 )
 
 type Reader struct {
-	gptReader      GPTReader
-	assets         Assets
-	promptTemplate string
+	gptReader             GPTReader
+	assets                Assets
+	sysPrompt, userPrompt string
 }
 
 type GPTReader interface {
 	Chat(ctx context.Context, systemMsg, userMsg string) (string, error)
 }
 
-func NewReader(gptReader GPTReader, promptTemplate string, assets Assets) (*Reader, error) {
+func NewReader(gptReader GPTReader, userPrompt, systemPrompt string, assets Assets) (*Reader, error) {
 	reader := &Reader{
-		gptReader:      gptReader,
-		assets:         assets,
-		promptTemplate: promptTemplate,
+		gptReader:  gptReader,
+		assets:     assets,
+		sysPrompt:  systemPrompt,
+		userPrompt: userPrompt,
 	}
 
-	if len(promptTemplate) == 0 {
-		reader.promptTemplate = defaultPrompt
+	if len(reader.sysPrompt) == 0 {
+		reader.sysPrompt = defaultSystemPrompt
+	}
+	if len(reader.userPrompt) == 0 {
+		reader.userPrompt = defaultUserPrompt
 	}
 
 	return reader, nil
@@ -72,8 +76,8 @@ func (r *Reader) sanitizeThing(thing string) string {
 	return thing
 }
 
-func (r *Reader) Prompt(cards [3]Card, thing string) string {
-	p := r.promptTemplate
+func (r *Reader) Prompt(cards [3]Card, thing, template string) string {
+	p := template
 	fills := map[string]string{
 		"thing": r.sanitizeThing(thing),
 		"card1": cards[0].ZhString(),
@@ -88,8 +92,9 @@ func (r *Reader) Prompt(cards [3]Card, thing string) string {
 }
 
 func (r *Reader) Read(ctx context.Context, cards [3]Card, thing string) (string, error) {
-	prompt := r.Prompt(cards, thing)
-	resp, err := r.gptReader.Chat(ctx, "", prompt)
+	sysPrompt := r.Prompt(cards, thing, r.sysPrompt)
+	userPrompt := r.Prompt(cards, thing, r.userPrompt)
+	resp, err := r.gptReader.Chat(ctx, sysPrompt, userPrompt)
 	if err != nil {
 		return "", errors.WithMessage(err, "failed to read from gpt")
 	}

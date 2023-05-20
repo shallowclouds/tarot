@@ -44,19 +44,19 @@ func main() {
 
 	rand.Seed(time.Now().UnixNano())
 
-	reader, err := tarot.NewReader(&tarot.DumbGPTReader{}, "", tarot.GetDefaultAssets())
+	reader, err := tarot.NewReader(&tarot.DumbGPTReader{}, "", "", tarot.GetDefaultAssets())
 	if err != nil {
 		panic(err)
 	}
 
-	cards, img, res, err := reader.DivineSync(context.Background(), *thingArg)
+	_, img, res, err := reader.DivineSync(context.Background(), *thingArg)
 	if err != nil {
 		panic(err)
 	}
 
 	fmt.Printf("%s\n", res)
 
-	fmt.Println(reader.Prompt(cards, *thingArg))
+	// fmt.Println(reader.Prompt(cards, *thingArg, ""))
 
 	// err = SavePng(img, "divine_results.png")
 	err = SaveJpg(img, "dev/divine_results.jpg")
