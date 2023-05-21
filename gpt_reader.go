@@ -49,7 +49,7 @@ type DumbGPTReader struct{}
 
 func (r *DumbGPTReader) Chat(ctx context.Context, systemMsg, userMsg string) (string, error) {
 	// return "你的未来诡谲难测，我看不到任何信息。", nil
-	return `根据三张牌的含义和您所问的问题，我的解读如下：
+	return `根据三张牌的含义和您所问的问题，解读如下：
 
 	首先，逆位的月亮牌表示您目前处于一种迷茫不定的状态，有些心理上的困扰和身体上的疑惑。您可能感到不安和焦虑，对您的身体状况也缺乏清晰的判断力。
 	
