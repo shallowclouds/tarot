@@ -14,7 +14,9 @@ import (
 	"sync"
 
 	"github.com/disintegration/imaging"
+	"github.com/fogleman/gg"
 	"github.com/golang/freetype/truetype"
+	"golang.org/x/image/font"
 )
 
 const (
@@ -51,6 +53,9 @@ type Assets struct {
 	Cards         []Card
 	BackgroundImg image.Image
 	Font          *truetype.Font
+	FontFace      font.Face
+	AskerImg      image.Image
+	ReaderImg     image.Image
 }
 
 var (
@@ -176,11 +181,47 @@ func initFonts() {
 	assets.Font = font
 }
 
+const (
+	defaultIconSize = 30
+)
+
+func initIcon() {
+	askerImg := mustReadImg("assets/sun.png")
+	readerImg := mustReadImg("assets/moon.png")
+
+	askerImg = imaging.Resize(askerImg, defaultIconSize, defaultIconSize, imaging.Lanczos)
+	readerImg = imaging.Resize(readerImg, defaultIconSize, defaultIconSize, imaging.Lanczos)
+
+	dc := gg.NewContextForImage(askerImg)
+	dc.SetFillRule(gg.FillRuleWinding)
+	dc.DrawCircle(float64(defaultIconSize/2), float64(defaultIconSize/2), float64(defaultIconSize/2))
+	dc.Clip()
+	dc.InvertMask()
+	dc.DrawRectangle(0, 0, float64(defaultIconSize), float64(defaultIconSize))
+	dc.SetColor(color.Black)
+	dc.Fill()
+	askerImg = dc.Image()
+
+	dc = gg.NewContextForImage(readerImg)
+	dc.SetFillRule(gg.FillRuleWinding)
+	dc.DrawCircle(float64(defaultIconSize/2), float64(defaultIconSize/2), float64(defaultIconSize/2))
+	dc.Clip()
+	dc.InvertMask()
+	dc.DrawRectangle(0, 0, float64(defaultIconSize), float64(defaultIconSize))
+	dc.SetColor(color.Black)
+	dc.Fill()
+	readerImg = dc.Image()
+
+	assets.AskerImg = askerImg
+	assets.ReaderImg = readerImg
+}
+
 func GetDefaultAssets() Assets {
 	initAssetsOnce.Do(func() {
 		initCards()
 		initBgImg()
 		initFonts()
+		initIcon()
 	})
 
 	return assets

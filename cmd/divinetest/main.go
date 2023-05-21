@@ -49,17 +49,24 @@ func main() {
 		panic(err)
 	}
 
-	_, img, res, err := reader.DivineSync(context.Background(), *thingArg)
+	res, err := reader.DivineWithOption(context.Background(), tarot.DivineOption{
+		Question:  *thingArg,
+		Asker:     "岳云翎",
+		AskerImg:  nil,
+		Reader:    "",
+		ReaderImg: nil,
+		Callback:  nil,
+	})
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Printf("%s\n", res)
+	fmt.Printf("%v\n", res)
 
 	// fmt.Println(reader.Prompt(cards, *thingArg, ""))
 
 	// err = SavePng(img, "divine_results.png")
-	err = SaveJpg(img, "dev/divine_results.jpg")
+	err = SaveJpg(res.Img, "dev/divine_results.jpg")
 	if err != nil {
 		panic(err)
 	}
