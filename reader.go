@@ -257,18 +257,16 @@ func (r *Reader) Render(cards [3]Card, Q, A string, opt DivineOption) (image.Ima
 	}
 	if opt.AskerImg == nil {
 		opt.AskerImg = r.assets.AskerImg
+	} else {
+		opt.AskerImg = processIcon(opt.AskerImg)
 	}
 	if opt.Reader == "" {
-		opt.Reader = "Fortuneteller"
+		opt.Reader = "占卜人"
 	}
 	if opt.ReaderImg == nil {
 		opt.ReaderImg = r.assets.ReaderImg
-	}
-	if b := opt.AskerImg.Bounds(); b.Dx() != defaultIconSize || b.Dy() != defaultIconSize {
-		opt.AskerImg = imaging.Resize(opt.AskerImg, defaultIconSize, defaultIconSize, imaging.Lanczos)
-	}
-	if b := opt.ReaderImg.Bounds(); b.Dx() != defaultIconSize || b.Dy() != defaultIconSize {
-		opt.ReaderImg = imaging.Resize(opt.ReaderImg, defaultIconSize, defaultIconSize, imaging.Lanczos)
+	} else {
+		opt.ReaderImg = processIcon(opt.ReaderImg)
 	}
 
 	img := image.NewNRGBA64(image.Rect(0, 0, defaultImageWidth, defaultImageHeight))
