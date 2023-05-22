@@ -9,8 +9,10 @@ import (
 	"image/color"
 	"image/draw"
 	"image/jpeg"
+	"image/png"
 	"io/fs"
 	"math"
+	"path/filepath"
 	"sync"
 
 	"github.com/disintegration/imaging"
@@ -72,12 +74,17 @@ func mustReadImg(p string) image.Image {
 		panic(err)
 	}
 
-	pic, err := jpeg.Decode(bytes.NewReader(data))
+	var img image.Image
+	if filepath.Ext(p) == ".png" {
+		img, err = png.Decode(bytes.NewReader(data))
+	} else {
+		img, err = jpeg.Decode(bytes.NewReader(data))
+	}
 	if err != nil {
 		panic(err)
 	}
 
-	return pic
+	return img
 }
 
 func imageTypeToRGBA64(m image.Image) *image.RGBA64 {
@@ -200,8 +207,8 @@ func processIcon(pic image.Image) image.Image {
 }
 
 func initIcon() {
-	askerImg := processIcon(mustReadImg("assets/sun.png"))
-	readerImg := processIcon(mustReadImg("assets/moon.png"))
+	askerImg := processIcon(mustReadImg("assets/moon.jpg"))
+	readerImg := processIcon(mustReadImg("assets/crystay_ball_1f52e.png"))
 
 	assets.AskerImg = askerImg
 	assets.ReaderImg = readerImg

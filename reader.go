@@ -62,9 +62,6 @@ func (r *Reader) Choose() ([3]Card, error) {
 const (
 	defaultSystemPrompt = `你是一位神秘的塔罗牌占卜师，请根据三张牌面和用户占卜的具体事情进行客观解读，语言简练精辟客观，不准回答模棱两可的话，不用提醒用户占卜的局限性或者意义，要明确指出预兆是好的还是坏的。`
 	defaultUserPrompt   = `我抽到的三张塔罗牌分别是：{{card1}}，{{card2}}，{{card3}}。我想占卜的事情是：“{{thing}}”，请解读。`
-	defaultPrompt       = `
-假如你是一位神秘的塔罗牌占卜师，我想要占卜事情是 “{{thing}}”，我抽到的三张牌分别是：{{card1}}，{{card2}}，{{card3}}。
-请根据三张牌面和这件具体事情进行解读，语言简练精辟客观，不准使用“虽然...但是...”这样模棱两可的话，千万不要建议我或者安慰我，不要提醒我占卜的局限性或者意义。`
 )
 
 func (r *Reader) sanitizeThing(thing string) string {
@@ -224,7 +221,6 @@ func wrapText(text string, maxWidth int, face font.Face) []string {
 // spacing and text alignment.
 func DrawStringWrapped(dc *gg.Context, ff font.Face, s string, x, y, ax, ay, width, lineSpacing float64, align gg.Align) float64 {
 	lines := wrapText(s, int(width), ff)
-	// originalY := y
 
 	// sync h formula with MeasureMultilineString
 	h := float64(len(lines)) * dc.FontHeight() * lineSpacing
@@ -314,18 +310,24 @@ func (r *Reader) Render(cards [3]Card, Q, A string, opt DivineOption) (image.Ima
 	ff = truetype.NewFace(r.assets.Font, &truetype.Options{
 		Size: 18,
 	})
-	dc.SetFontFace(ff)
 
-	dc.DrawImageAnchored(opt.AskerImg, aW-75, 20, 0, 0)
-	dc.DrawStringAnchored(opt.Asker+":", float64(aW-75+30+5), float64(20+15), 0, 0.5)
-	yAsker := DrawStringWrapped(dc, ff, Q,
-		float64(aW-75), float64(20+30+10), 0, 0, float64(defaultImageWidth/3), 1, gg.AlignLeft)
+	// Draw text.
+	textImg := gg.NewContext(defaultImageWidth-(aW-75), defaultImageHeight)
+	textImg.SetColor(color.White)
+	textImg.SetFontFace(ff)
+	textImg.DrawImageAnchored(opt.AskerImg, 0, 0, 0, 0)
+	textImg.DrawStringAnchored(opt.Asker+":", float64(30+5), float64(15), 0, 0.5)
+	yAsker := DrawStringWrapped(textImg, ff, Q,
+		0, float64(30+10), 0, 0, float64(defaultImageWidth/3), 1, gg.AlignLeft)
+	textImg.DrawImageAnchored(opt.ReaderImg, 0, int(yAsker)+20, 0, 0)
+	textImg.DrawStringAnchored(opt.Reader+":", float64(30+5), float64(yAsker+20+15), 0, 0.5)
+	yAsker = DrawStringWrapped(textImg, ff, A,
+		0, float64(yAsker+20+30+10), 0, 0, float64(defaultImageWidth/3), 1, gg.AlignLeft)
 
-	dc.DrawImageAnchored(opt.ReaderImg, aW-75, int(yAsker)+20, 0, 0)
-	dc.DrawStringAnchored(opt.Reader+":", float64(aW-75+30+5), float64(yAsker+20+15), 0, 0.5)
+	textImg.ShearAbout(float64(textImg.Width()), float64(yAsker), 0, 0)
+	cropTextImg := imaging.Crop(textImg.Image(), image.Rect(0, 0, textImg.Width(), int(yAsker+5)))
 
-	DrawStringWrapped(dc, ff, A,
-		float64(aW-75), float64(yAsker+20+30+10), 0, 0, float64(defaultImageWidth/3), 1, gg.AlignLeft)
+	dc.DrawImageAnchored(cropTextImg, aW-75, defaultImageHeight/2, 0, 0.5)
 
 	return dc.Image(), nil
 }
