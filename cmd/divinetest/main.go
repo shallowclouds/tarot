@@ -66,7 +66,7 @@ func main() {
 	// fmt.Println(reader.Prompt(cards, *thingArg, ""))
 
 	// err = SavePng(img, "divine_results.png")
-	err = SaveJpg(res.Img, "dev/divine_results.jpg")
+	err = SaveJpg(res.Img, "assets/divine_results.jpg")
 	if err != nil {
 		panic(err)
 	}
