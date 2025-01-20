@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// TestCardZhString 测试卡牌中文字符串格式化功能
 func TestCardZhString(t *testing.T) {
 	testCases := []struct {
 		name     string
@@ -14,7 +15,7 @@ func TestCardZhString(t *testing.T) {
 		expected string
 	}{
 		{
-			name: "upright position",
+			name: "正位测试",
 			card: tarot.Card{
 				Name:     "The Fool",
 				ZhName:   "愚者",
@@ -23,7 +24,7 @@ func TestCardZhString(t *testing.T) {
 			expected: "愚者（正位）",
 		},
 		{
-			name: "reversed position",
+			name: "逆位测试",
 			card: tarot.Card{
 				Name:     "The Fool",
 				ZhName:   "愚者",

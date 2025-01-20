@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// TestReaderChoose 测试塔罗牌选择功能
 func TestReaderChoose(t *testing.T) {
 	r, err := tarot.NewReader(&tarot.DumbGPTReader{}, "", "", tarot.GetDefaultAssets())
 	require.NoError(t, err)
@@ -16,7 +17,7 @@ func TestReaderChoose(t *testing.T) {
 	require.NoError(t, err)
 	require.Len(t, cards, 3)
 
-	// Verify positions are either upright or reversed
+	// 验证卡牌位置是正位或逆位
 	for _, card := range cards {
 		require.Contains(t, []tarot.Position{tarot.PositionUpright, tarot.PositionReversed}, card.Position)
 	}

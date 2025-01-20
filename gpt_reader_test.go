@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// TestDumbGPTReader 测试模拟GPT阅读器的功能
 func TestDumbGPTReader(t *testing.T) {
 	testCases := []struct {
 		name       string
@@ -17,14 +18,14 @@ func TestDumbGPTReader(t *testing.T) {
 		expectResp bool
 	}{
 		{
-			name:       "empty messages",
+			name:       "空消息测试",
 			systemMsg:  "",
 			userMsg:    "",
 			expectErr:  false,
 			expectResp: true,
 		},
 		{
-			name:       "with system message",
+			name:       "系统消息测试",
 			systemMsg:  "System message",
 			userMsg:    "User message",
 			expectErr:  false,
