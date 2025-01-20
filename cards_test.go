@@ -3,8 +3,8 @@ package tarot_test
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
 	"github.com/shallowclouds/tarot"
+	"github.com/stretchr/testify/require"
 )
 
 func TestCardZhString(t *testing.T) {
