@@ -1,6 +1,6 @@
 module github.com/shallowclouds/tarot
 
-go 1.19
+go 1.18
 
 require (
 	github.com/disintegration/imaging v1.6.2
@@ -9,6 +9,8 @@ require (
 	github.com/sirupsen/logrus v1.9.0
 	golang.org/x/image v0.7.0
 )
+
+require github.com/stretchr/testify v1.10.0 // indirect
 
 require (
 	github.com/fogleman/gg v1.3.0
