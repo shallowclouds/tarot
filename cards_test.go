@@ -41,6 +41,7 @@ func TestCardZhString(t *testing.T) {
 	}
 }
 
+// TestGetDefaultAssets 测试默认资源（卡牌、图片、字体）的加载功能
 func TestGetDefaultAssets(t *testing.T) {
 	assets := tarot.GetDefaultAssets()
 	require.NotEmpty(t, assets.Cards)

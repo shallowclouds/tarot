@@ -23,6 +23,7 @@ func TestReaderChoose(t *testing.T) {
 	}
 }
 
+// TestReaderPrompt 测试塔罗牌提示信息生成功能
 func TestReaderPrompt(t *testing.T) {
 	r, err := tarot.NewReader(&tarot.DumbGPTReader{}, "", "", tarot.GetDefaultAssets())
 	require.NoError(t, err)
@@ -40,6 +41,7 @@ func TestReaderPrompt(t *testing.T) {
 	require.Contains(t, prompt, "女祭司（正位）")
 }
 
+// TestReaderDivineWithOption 测试塔罗牌占卜功能，包括卡牌选择和解读
 func TestReaderDivineWithOption(t *testing.T) {
 	r, err := tarot.NewReader(&tarot.DumbGPTReader{}, "", "", tarot.GetDefaultAssets())
 	require.NoError(t, err)
