@@ -1,6 +1,6 @@
 module github.com/shallowclouds/tarot
 
-go 1.19
+go 1.18
 
 require (
 	github.com/disintegration/imaging v1.6.2
@@ -15,3 +15,5 @@ require (
 	github.com/sashabaranov/go-openai v1.9.4
 	golang.org/x/sys v0.5.0 // indirect
 )
+
+replace github.com/shallowclouds/go-utils => /home/ubuntu/repos/go-utils

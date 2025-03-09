@@ -11,7 +11,7 @@ import (
 	"github.com/disintegration/imaging"
 	"github.com/fogleman/gg"
 	"github.com/golang/freetype/truetype"
-	"github.com/pkg/errors"
+	"github.com/shallowclouds/go-utils/errors"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/image/font"
 	"golang.org/x/image/math/fixed"
