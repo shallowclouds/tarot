@@ -59,3 +59,55 @@ func (r *DumbGPTReader) Chat(ctx context.Context, systemMsg, userMsg string) (st
 	
 	因此，综合三张牌的意义和您所问的问题，我的结论是：您可以通过自己的努力和积极乐观的心态来改善身体状况，慢慢走出迷茫和焦虑的状态，达到身体健康的目标。`, nil
 }
+
+type DeepSeekReader struct {
+	client *openai.Client
+	model  string
+}
+
+func NewDeepSeekReader(apiKey, baseURL, model string) *DeepSeekReader {
+	config := openai.DefaultConfig(apiKey)
+
+	if baseURL != "" {
+		config.BaseURL = baseURL
+	} else {
+		config.BaseURL = "https://api.deepseek.com"
+	}
+
+	if model == "" {
+		model = "deepseek-chat"
+	}
+
+	client := openai.NewClientWithConfig(config)
+	return &DeepSeekReader{
+		client: client,
+		model:  model,
+	}
+}
+
+func (r *DeepSeekReader) Chat(ctx context.Context, systemMsg, userMsg string) (string, error) {
+	req := openai.ChatCompletionRequest{
+		Model:    r.model,
+		N:        1,
+		Messages: make([]openai.ChatCompletionMessage, 0),
+	}
+
+	if len(systemMsg) != 0 {
+		req.Messages = append(req.Messages, openai.ChatCompletionMessage{
+			Role:    openai.ChatMessageRoleSystem,
+			Content: systemMsg,
+		})
+	}
+
+	req.Messages = append(req.Messages, openai.ChatCompletionMessage{
+		Role:    openai.ChatMessageRoleUser,
+		Content: userMsg,
+	})
+
+	resp, err := r.client.CreateChatCompletion(ctx, req)
+	if err != nil {
+		return "", err
+	}
+
+	return resp.Choices[0].Message.Content, nil
+}
