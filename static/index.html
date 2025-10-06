@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>塔罗牌占卜</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔮 塔罗牌占卜</h1>
+            <p class="subtitle">探索命运的奥秘</p>
+        </header>
+
+        <main>
+            <div class="input-section">
+                <label for="question">请输入您的问题：</label>
+                <textarea 
+                    id="question" 
+                    placeholder="例如：我今天的运势如何？我的工作会顺利吗？"
+                    rows="3"
+                ></textarea>
+                <button id="divineBtn" onclick="divine()">开始占卜</button>
+            </div>
+
+            <div id="loading" class="loading" style="display: none;">
+                <div class="spinner"></div>
+                <p>正在为您占卜中...</p>
+            </div>
+
+            <div id="result" class="result" style="display: none;">
+                <h2>占卜结果</h2>
+                
+                <div class="cards-section">
+                    <h3>抽到的牌：</h3>
+                    <div id="cards" class="cards"></div>
+                </div>
+
+                <div class="reading-section">
+                    <h3>解读：</h3>
+                    <p id="reading" class="reading-text"></p>
+                </div>
+
+                <div class="image-section">
+                    <h3>占卜图：</h3>
+                    <img id="resultImage" alt="占卜结果图" />
+                </div>
+
+                <button onclick="reset()" class="reset-btn">再次占卜</button>
+            </div>
+
+            <div id="error" class="error" style="display: none;"></div>
+        </main>
+
+        <footer>
+            <p>由 DeepSeek AI 驱动</p>
+        </footer>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
